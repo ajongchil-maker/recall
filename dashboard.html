@@ -31,25 +31,25 @@ footer{text-align:center;padding:20px;color:#bbb;font-size:11px;margin-top:8px;}
 </style>
 </head>
 <body>
-<div class="update-bar">✅ 마지막 업데이트: 2026년 03월 30일 10:35 &nbsp;|&nbsp; 🔄 다음 업데이트 예정: 2026년 04월 06일 (매주 월요일)</div>
+<div class="update-bar">✅ 마지막 업데이트: 2026년 03월 30일 10:38 &nbsp;|&nbsp; 🔄 다음 업데이트 예정: 2026년 04월 06일 (매주 월요일)</div>
 <div class="header">
   <h1>📊 제품안전 리콜 대시보드</h1>
-  <p class="sub">조회 기간: 2026.03.23 ~ 2026.03.30 &nbsp;|&nbsp; 키워드: 완구, 유아, 장난감, 아동, 키즈, 봉제인형, 어린이, 아기, 아이, 놀이</p>
+  <p class="sub">조회 기간: 2026.02.28 ~ 2026.03.30 &nbsp;|&nbsp; 키워드: 완구, 유아, 장난감, 아동, 키즈, 봉제인형, 어린이, 아기, 아이, 놀이</p>
 </div>
 <div class="body">
   <a href="index.html" class="back-btn">← 리콜 목록으로</a>
   <div class="metrics">
-    <div class="metric"><div class="lbl">전체 리콜</div><div class="num" style="color:#1a3c5e">1</div><div class="sub">건</div></div>
-    <div class="metric"><div class="lbl">🇰🇷 국내 리콜</div><div class="num" style="color:#185FA5">0</div><div class="sub">-</div></div>
-    <div class="metric"><div class="lbl">🌍 국외 리콜</div><div class="num" style="color:#3B6D11">1</div><div class="sub">자발적 1건</div></div>
-    <div class="metric"><div class="lbl">위해 유형</div><div class="num" style="color:#993C1D">1</div><div class="sub">종류</div></div>
+    <div class="metric"><div class="lbl">전체 리콜</div><div class="num" style="color:#1a3c5e">42</div><div class="sub">건</div></div>
+    <div class="metric"><div class="lbl">🇰🇷 국내 리콜</div><div class="num" style="color:#185FA5">1</div><div class="sub">자발적 1건</div></div>
+    <div class="metric"><div class="lbl">🌍 국외 리콜</div><div class="num" style="color:#3B6D11">41</div><div class="sub">자발적 29건 · 명령 12건</div></div>
+    <div class="metric"><div class="lbl">위해 유형</div><div class="num" style="color:#993C1D">5</div><div class="sub">종류</div></div>
   </div>
   <div class="charts-row">
     <div class="chart-box">
       <h3>리콜 유형별</h3><div class="desc">자발적 · 명령 · 권고</div>
       <div class="legend">
-        <span><i style="background:#378ADD"></i>자발적 1건</span>
-        <span><i style="background:#D85A30"></i>명령 0건</span>
+        <span><i style="background:#378ADD"></i>자발적 30건</span>
+        <span><i style="background:#D85A30"></i>명령 12건</span>
         <span><i style="background:#639922"></i>권고 0건</span>
       </div>
       <div style="position:relative;height:200px;"><canvas id="typeChart"></canvas></div>
@@ -79,7 +79,7 @@ const C = {blue:'#378ADD',red:'#D85A30',green:'#639922',amber:'#BA7517',purple:'
 
 new Chart(document.getElementById('typeChart'),{
   type:'doughnut',
-  data:{labels:["자발적 리콜"],datasets:[{data:[1],backgroundColor:[C.blue,C.red,C.green,C.gray],borderWidth:0,hoverOffset:4}]},
+  data:{labels:["자발적 리콜", "명령에따른 리콜"],datasets:[{data:[30, 12],backgroundColor:[C.blue,C.red,C.green,C.gray],borderWidth:0,hoverOffset:4}]},
   options:{
     responsive:true,maintainAspectRatio:false,cutout:'62%',
     plugins:{
@@ -100,7 +100,7 @@ new Chart(document.getElementById('typeChart'),{
 
 new Chart(document.getElementById('catChart'),{
   type:'bar',
-  data:{labels:["기타"],datasets:[{data:[1],backgroundColor:C.blue,borderRadius:4,borderSkipped:false}]},
+  data:{labels:["기타", "놀이용품", "유아용품", "완구", "인형"],datasets:[{data:[14, 3, 5, 15, 5],backgroundColor:C.blue,borderRadius:4,borderSkipped:false}]},
   options:{
     indexAxis:'y',responsive:true,maintainAspectRatio:false,
     plugins:{
@@ -118,13 +118,13 @@ new Chart(document.getElementById('catChart'),{
   }
 });
 
-const hColors=[["부상/낙상"].map(l=>({
+const hColors=[["기타", "부상/낙상", "질식/삼킴", "화학물질", "화재/과열"].map(l=>({
   '질식/삼킴':C.red,'화학물질':C.blue,'부상/낙상':C.green,'화재/과열':C.amber
 })[l]||C.gray)][0];
 
 new Chart(document.getElementById('hazardChart'),{
   type:'bar',
-  data:{labels:["부상/낙상"],datasets:[{data:[1],backgroundColor:hColors,borderRadius:4,borderSkipped:false}]},
+  data:{labels:["기타", "부상/낙상", "질식/삼킴", "화학물질", "화재/과열"],datasets:[{data:[14, 7, 13, 7, 1],backgroundColor:hColors,borderRadius:4,borderSkipped:false}]},
   options:{
     responsive:true,maintainAspectRatio:false,
     plugins:{
