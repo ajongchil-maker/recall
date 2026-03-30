@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>리콜 대시보드 — 2026년 03월 </title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;background:#f0f4f8;color:#222;}
+.update-bar{background:#1a5c2a;color:#fff;text-align:center;padding:10px;font-size:13px;}
+.header{background:linear-gradient(135deg,#0e2a45,#1a5c9a);color:#fff;padding:24px 20px;text-align:center;}
+.header h1{font-size:20px;margin-bottom:4px;}
+.header .sub{opacity:.75;font-size:12px;}
+.body{max-width:1100px;margin:0 auto;padding:20px;}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.metric{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.metric .lbl{font-size:11px;color:#888;margin-bottom:6px;}
+.metric .num{font-size:26px;font-weight:700;}
+.metric .sub{font-size:11px;color:#aaa;margin-top:3px;}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.chart-box{background:#fff;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.chart-box h3{font-size:13px;font-weight:700;margin-bottom:3px;}
+.chart-box .desc{font-size:11px;color:#aaa;margin-bottom:12px;}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;font-size:11px;color:#666;}
+.legend span{display:flex;align-items:center;gap:4px;}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;}
+.back-btn{display:inline-block;margin:0 0 16px;font-size:13px;color:#2979b8;text-decoration:none;font-weight:600;}
+footer{text-align:center;padding:20px;color:#bbb;font-size:11px;margin-top:8px;}
+@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr);} .charts-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="update-bar">✅ 마지막 업데이트: 2026년 03월 30일 10:35 &nbsp;|&nbsp; 🔄 다음 업데이트 예정: 2026년 04월 06일 (매주 월요일)</div>
+<div class="header">
+  <h1>📊 제품안전 리콜 대시보드</h1>
+  <p class="sub">조회 기간: 2026.03.23 ~ 2026.03.30 &nbsp;|&nbsp; 키워드: 완구, 유아, 장난감, 아동, 키즈, 봉제인형, 어린이, 아기, 아이, 놀이</p>
+</div>
+<div class="body">
+  <a href="index.html" class="back-btn">← 리콜 목록으로</a>
+  <div class="metrics">
+    <div class="metric"><div class="lbl">전체 리콜</div><div class="num" style="color:#1a3c5e">1</div><div class="sub">건</div></div>
+    <div class="metric"><div class="lbl">🇰🇷 국내 리콜</div><div class="num" style="color:#185FA5">0</div><div class="sub">-</div></div>
+    <div class="metric"><div class="lbl">🌍 국외 리콜</div><div class="num" style="color:#3B6D11">1</div><div class="sub">자발적 1건</div></div>
+    <div class="metric"><div class="lbl">위해 유형</div><div class="num" style="color:#993C1D">1</div><div class="sub">종류</div></div>
+  </div>
+  <div class="charts-row">
+    <div class="chart-box">
+      <h3>리콜 유형별</h3><div class="desc">자발적 · 명령 · 권고</div>
+      <div class="legend">
+        <span><i style="background:#378ADD"></i>자발적 1건</span>
+        <span><i style="background:#D85A30"></i>명령 0건</span>
+        <span><i style="background:#639922"></i>권고 0건</span>
+      </div>
+      <div style="position:relative;height:200px;"><canvas id="typeChart"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <h3>제품군별</h3><div class="desc">제품명 키워드 분석</div>
+      <div style="position:relative;height:230px;"><canvas id="catChart"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-box">
+    <h3>위해 유형별</h3><div class="desc">위해내용 텍스트 분석</div>
+    <div class="legend">
+      <span><i style="background:#D85A30"></i>질식/삼킴</span>
+      <span><i style="background:#378ADD"></i>화학물질</span>
+      <span><i style="background:#639922"></i>부상/낙상</span>
+      <span><i style="background:#BA7517"></i>화재/과열</span>
+      <span><i style="background:#888780"></i>기타</span>
+    </div>
+    <div style="position:relative;height:160px;"><canvas id="hazardChart"></canvas></div>
+  </div>
+</div>
+<footer>출처: 제품안전정보센터 (www.safetykorea.kr) — 국가기술표준원</footer>
+<script>
+window.addEventListener('load', function() {
+try { Chart.register(ChartDataLabels); } catch(e) {}
+const C = {blue:'#378ADD',red:'#D85A30',green:'#639922',amber:'#BA7517',purple:'#7F77DD',gray:'#888780'};
+
+new Chart(document.getElementById('typeChart'),{
+  type:'doughnut',
+  data:{labels:["자발적 리콜"],datasets:[{data:[1],backgroundColor:[C.blue,C.red,C.green,C.gray],borderWidth:0,hoverOffset:4}]},
+  options:{
+    responsive:true,maintainAspectRatio:false,cutout:'62%',
+    plugins:{
+      legend:{display:false},
+      datalabels:{
+        color:'#fff',
+        font:{weight:'bold',size:13},
+        formatter:(v,ctx)=>{
+          const total=ctx.dataset.data.reduce((a,b)=>a+b,0);
+          if(v===0) return '';
+          return v+'건
+('+Math.round(v/total*100)+'%)';
+        }
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById('catChart'),{
+  type:'bar',
+  data:{labels:["기타"],datasets:[{data:[1],backgroundColor:C.blue,borderRadius:4,borderSkipped:false}]},
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      datalabels:{
+        anchor:'end',align:'end',
+        color:'#185FA5',font:{weight:'bold',size:12},
+        formatter:v=>v===0?'':v+'건'
+      }
+    },
+    scales:{
+      x:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{stepSize:1}},
+      y:{grid:{display:false}}
+    }
+  }
+});
+
+const hColors=[["부상/낙상"].map(l=>({
+  '질식/삼킴':C.red,'화학물질':C.blue,'부상/낙상':C.green,'화재/과열':C.amber
+})[l]||C.gray)][0];
+
+new Chart(document.getElementById('hazardChart'),{
+  type:'bar',
+  data:{labels:["부상/낙상"],datasets:[{data:[1],backgroundColor:hColors,borderRadius:4,borderSkipped:false}]},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      datalabels:{
+        anchor:'end',align:'top',
+        color:'#444',font:{weight:'bold',size:12},
+        formatter:v=>v===0?'':v+'건'
+      }
+    },
+    scales:{
+      x:{grid:{display:false}},
+      y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{stepSize:1}}
+    }
+  }
+});
+}); // end window.onload
+</script>
+</body></html>
